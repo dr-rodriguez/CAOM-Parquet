@@ -1,0 +1,15 @@
+[project]
+name = "caom-parquet"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">3.10,<3.13"
+dependencies = [
+    "hats>=0.7.0",
+    "hats-import>=0.7.0",
+    "lsdb>=0.7.0",
+    "pandas>=2.3.3",
+    "pyarrow>=22.0.0",
+    "pyodbc>=5.3.0",
+    "sqlalchemy>=2.0.44",
+]
