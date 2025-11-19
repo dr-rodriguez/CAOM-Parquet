@@ -42,9 +42,8 @@ Convert the CAOM MSSQL database's ObsQuery view (~300M rows) into HATS-formatted
 - Create `extract_obsquery.py`:
   - Query ObsQuery view in batches (chunked reads to handle 300M rows)
   - Use `pd.read_sql()` with `chunksize` parameter (e.g., 100K-1M rows per chunk)
-  - Identify spatial columns (RA, Dec, or similar) for HATS tiling
-  - Handle data types and nulls appropriately
-  - Save intermediate Parquet files per chunk (optional, for recovery)
+  - Handle data types and nulls appropriately (optional)
+  - Save intermediate csv files per chunk in data/ directory
 
 ### 5. Data Validation
 
