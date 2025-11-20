@@ -68,7 +68,8 @@ def execute_queries(catalog):
         cone_search_result = catalog.cone_search(
             ra=ra_center, dec=dec_center, radius_arcsec=radius_arcsec
         )
-        count = len(cone_search_result)
+        df_result = cone_search_result.head(1_000_000).to_pandas()
+        count = len(df_result)
         print(f"Found {count} objects in cone.")
     except Exception as e:
         print(f"Cone search failed: {e}")
@@ -80,11 +81,15 @@ def execute_queries(catalog):
         print("Filtering for objects (example query)...")
         # Example: Filter for HST observations
         filtered_catalog = catalog.query("obs_collection == 'HST'")
-        print(f"Found {len(filtered_catalog)} HST observations.")
+        df_filtered = filtered_catalog.head(1_000_000).to_pandas()
+        count = len(df_filtered)
+        print(f"Found {count} HST observations.")
 
         # Example: Filter by exposure time
         filtered_catalog = catalog.query("t_exptime > 1000")
-        print(f"Found {len(filtered_catalog)} observations with t_exptime > 1000.")
+        df_filtered = filtered_catalog.head(1_000_000).to_pandas()
+        count = len(df_filtered)
+        print(f"Found {count} observations with t_exptime > 1000.")
     except Exception as e:
         print(f"Filtering example skipped: {e}")
 
