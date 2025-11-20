@@ -8,8 +8,13 @@ dependencies = [
     "hats>=0.7.0",
     "hats-import>=0.7.0",
     "lsdb>=0.7.0",
+    "matplotlib>=3.10.7",
     "pandas>=2.3.3",
     "pyarrow>=22.0.0",
     "pyodbc>=5.3.0",
     "sqlalchemy>=2.0.44",
 ]
+
+[[tool.uv.index]]
+url = "https://bytesalad.stsci.edu/artifactory/api/pypi/mast-pypi/simple"
+default = true

@@ -5,7 +5,7 @@ import os
 
 # Placeholder path to the HATS catalog
 # In a real scenario, this would be the path to the directory containing the HATS data
-HATS_PATH = os.path.join("data", "hats")
+HATS_PATH = os.path.join("data", "hats", "caom")
 
 
 def main():
