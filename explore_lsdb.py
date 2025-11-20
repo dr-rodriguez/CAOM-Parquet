@@ -1,5 +1,4 @@
 import lsdb
-import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
@@ -98,9 +97,9 @@ def execute_queries(catalog):
     print("\n--- Visualization ---")
 
     try:
-        # compute() triggers the actual data loading
+        # head() returns a NestedFrame, convert to pandas DataFrame for visualization
         print("Loading top 1000 rows for visualization...")
-        df = catalog.head(1000).compute()
+        df = catalog.head(1000).to_pandas()
 
         # CAOM spatial columns
         ra_col = "s_ra"
