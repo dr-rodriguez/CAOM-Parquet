@@ -46,8 +46,7 @@ def execute_queries(catalog):
 
     # 1. Column statistics
     print("\n--- Column Statistics ---")
-    catalog_copy = catalog.copy()
-    stats = catalog_copy.aggregate_column_statistics()
+    stats = catalog.aggregate_column_statistics()
     print(stats)
 
 
