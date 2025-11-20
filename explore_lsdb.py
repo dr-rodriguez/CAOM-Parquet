@@ -30,7 +30,7 @@ def main():
         # Display basic info
         print("\nCatalog info:")
         print(f"  Name: {catalog.name}")
-        print(f"  Total rows (estimated): {catalog.count()}")
+        print(f"  Total rows (estimated): {len(catalog)}")
 
         execute_queries(catalog)
 
@@ -44,6 +44,13 @@ def main():
 def execute_queries(catalog):
     """Executes actual LSDB queries on the loaded catalog."""
 
+    # 1. Column statistics
+    print("\n--- Column Statistics ---")
+    catalog_copy = catalog.copy()
+    stats = catalog_copy.aggregate_column_statistics()
+    print(stats)
+
+
     # 2. Test basic queries (spatial searches, filtering)
     print("\n--- Basic Queries ---")
 
@@ -52,18 +59,18 @@ def execute_queries(catalog):
     # CAOM uses 's_ra' and 's_dec' for coordinates
     ra_center = 210.8  # Example: M101
     dec_center = 54.3
-    radius_deg = 1.0
+    radius_arcsec = 1*60*60 # 1 degree
 
     print(
-        f"Performing cone search at RA={ra_center}, Dec={dec_center}, radius={radius_deg} deg..."
+        f"Performing cone search at RA={ra_center}, Dec={dec_center}, radius_arcsec={radius_arcsec} arcseconds..."
     )
     try:
         # lsdb automatically detects spatial columns if properly defined in HATS metadata
         # otherwise we might need to specify them, but HATS usually handles this.
         cone_search_result = catalog.cone_search(
-            ra=ra_center, dec=dec_center, radius=radius_deg
+            ra=ra_center, dec=dec_center, radius_arcsec=radius_arcsec
         )
-        count = cone_search_result.count()
+        count = len(cone_search_result)
         print(f"Found {count} objects in cone.")
     except Exception as e:
         print(f"Cone search failed: {e}")
@@ -75,11 +82,11 @@ def execute_queries(catalog):
         print("Filtering for objects (example query)...")
         # Example: Filter for HST observations
         filtered_catalog = catalog.query("obs_collection == 'HST'")
-        print(f"Found {filtered_catalog.count()} HST observations.")
+        print(f"Found {len(filtered_catalog)} HST observations.")
 
         # Example: Filter by exposure time
         filtered_catalog = catalog.query("t_exptime > 1000")
-        print(f"Found {filtered_catalog.count()} observations with t_exptime > 1000.")
+        print(f"Found {len(filtered_catalog)} observations with t_exptime > 1000.")
     except Exception as e:
         print(f"Filtering example skipped: {e}")
 
