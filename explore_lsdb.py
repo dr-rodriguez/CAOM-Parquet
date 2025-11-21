@@ -1,3 +1,4 @@
+from tokenize import PlainToken
 import lsdb
 import matplotlib.pyplot as plt
 import os
@@ -24,7 +25,7 @@ def main():
         # lsdb.read_hats() reads the metadata and prepares the catalog for lazy loading
         catalog = lsdb.read_hats(HATS_PATH)
         print("Catalog loaded successfully!")
-        print(catalog)
+        # print(catalog)
 
         # Display basic info
         print("\nCatalog info:")
@@ -133,6 +134,11 @@ def execute_queries(catalog):
             )
     except Exception as e:
         print(f"Visualization failed: {e}")
+
+    print("\n--- Sky coverage ---")
+    fig, ax = catalog.plot_pixels()
+    plt.savefig("sky_coverage.png")
+    print("Saved sky coverage visualization to sky_coverage.png")
 
 
 if __name__ == "__main__":
