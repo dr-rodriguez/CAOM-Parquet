@@ -6,6 +6,50 @@ from hats_import.catalog.file_readers.csv import CsvReader
 import config
 
 
+class FilteredCsvReader(CsvReader):
+    """
+    Custom CSV reader that filters out rows with invalid coordinates.
+    
+    Filters rows where:
+    - Declination is outside [-90, 90] degrees
+    - Declination is NaN or None
+    - RA is NaN or None (RA can wrap, so we only check for NaN)
+    """
+    
+    def __init__(self, ra_column="s_ra", dec_column="s_dec", **kwargs):
+        super().__init__(**kwargs)
+        self.ra_column = ra_column
+        self.dec_column = dec_column
+    
+    def read(self, input_file, read_columns=None):
+        """
+        Read CSV file and filter out invalid coordinates.
+        """
+        for chunk_df in super().read(input_file, read_columns=read_columns):
+            # Filter out rows with invalid coordinates
+            filtered_chunk = chunk_df
+            if self.ra_column in chunk_df.columns and self.dec_column in chunk_df.columns:
+                # Create mask for valid coordinates
+                valid_mask = (
+                    chunk_df[self.dec_column].notna() &
+                    (chunk_df[self.dec_column] >= -90.0) &
+                    (chunk_df[self.dec_column] <= 90.0) &
+                    chunk_df[self.ra_column].notna()
+                )
+                
+                # Count filtered rows for logging
+                # filtered_count = (~valid_mask).sum()
+                # if filtered_count > 0:
+                #     print(f"Warning: Filtered {filtered_count} rows with invalid coordinates from {input_file}")
+                
+                # Return only valid rows
+                filtered_chunk = chunk_df[valid_mask]
+            
+            # Only yield non-empty chunks
+            if len(filtered_chunk) > 0:
+                yield filtered_chunk
+
+
 def get_caom_type_map():
     """
     Create a type mapping based on CAOM field descriptions.
@@ -76,8 +120,11 @@ def main():
     output_path = os.path.join("data", "hats")
     output_artifact_name = "caom"
 
-    # Create CSV reader with type mapping and low_memory=False to avoid mixed type warnings
-    csv_reader = CsvReader(
+    # Create filtered CSV reader with type mapping and low_memory=False to avoid mixed type warnings
+    # This reader will filter out rows with invalid coordinates before HEALPix conversion
+    csv_reader = FilteredCsvReader(
+        ra_column=config.RA_COLUMN,
+        dec_column=config.DEC_COLUMN,
         type_map=get_caom_type_map(),
         chunksize=500000,
         header="infer",
