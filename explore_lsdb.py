@@ -68,7 +68,7 @@ def execute_queries(catalog):
         cone_search_result = catalog.cone_search(
             ra=ra_center, dec=dec_center, radius_arcsec=radius_arcsec
         )
-        df_result = cone_search_result.head(1_000_000).to_pandas()
+        df_result = cone_search_result.compute()
         count = len(df_result)
         print(f"Found {count} objects in cone.")
     except Exception as e:
@@ -81,13 +81,13 @@ def execute_queries(catalog):
         print("Filtering for objects (example query)...")
         # Example: Filter for HST observations
         filtered_catalog = catalog.query("obs_collection == 'HST'")
-        df_filtered = filtered_catalog.head(1_000_000).to_pandas()
+        df_filtered = filtered_catalog.compute()
         count = len(df_filtered)
         print(f"Found {count} HST observations.")
 
         # Example: Filter by exposure time
         filtered_catalog = catalog.query("t_exptime > 1000")
-        df_filtered = filtered_catalog.head(1_000_000).to_pandas()
+        df_filtered = filtered_catalog.compute()
         count = len(df_filtered)
         print(f"Found {count} observations with t_exptime > 1000.")
     except Exception as e:
@@ -103,8 +103,8 @@ def execute_queries(catalog):
 
     try:
         # head() returns a NestedFrame, convert to pandas DataFrame for visualization
-        print("Loading top 1000 rows for visualization...")
-        df = catalog.head(1000).to_pandas()
+        print("Loading top 100,000 rows for visualization...")
+        df = catalog.head(100_000).to_pandas()
 
         # CAOM spatial columns
         ra_col = "s_ra"
